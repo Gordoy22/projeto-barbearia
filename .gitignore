@@ -1,0 +1,19 @@
+# Compilados
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Sistema
+.DS_Store
+Thumbs.db
