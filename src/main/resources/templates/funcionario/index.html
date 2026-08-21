@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Funcionários | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Funcionários</h1>
+            <p>Profissionais da barbearia.</p>
+        </div>
+        <a class="btn btn-dark" th:href="@{/funcionarios/novo}"><i class="bi bi-plus-lg"></i> Novo funcionário</a>
+    </div>
+
+    <form class="toolbar" method="get" th:action="@{/funcionarios}">
+        <div class="search-field">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="search" name="busca" th:value="${busca}" placeholder="Buscar...">
+        </div>
+        <button class="btn btn-ghost" type="submit">Buscar</button>
+    </form>
+
+    <div class="card-soft">
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Telefone</th>
+                    <th>Comissão</th>
+                    <th>Situação</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${pagina.empty}">
+                    <td colspan="6" class="text-center text-muted py-4">Nenhum funcionário encontrado.</td>
+                </tr>
+                <tr th:each="funcionario : ${pagina.content}">
+                    <td th:text="${funcionario.nome}">Carlos Silva</td>
+                    <td th:text="${funcionario.cargo}">Barbeiro</td>
+                    <td th:text="${funcionario.telefone}">45 99999-0001</td>
+                    <td th:text="${funcionario.percentualComissao != null ? #numbers.formatDecimal(funcionario.percentualComissao, 1, 2, 'COMMA') + '%' : '-'}">40%</td>
+                    <td>
+                        <span class="badge-status" th:classappend="${funcionario.ativo} ? ' badge-ativo' : ' badge-inativo'"
+                              th:text="${funcionario.ativo} ? 'Ativo' : 'Inativo'">Ativo</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-ghost btn-sm" data-bs-toggle="dropdown">Ações</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" th:href="@{/funcionarios/{id}(id=${funcionario.id})}">Visualizar</a></li>
+                                <li><a class="dropdown-item" th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}">Editar</a></li>
+                                <li>
+                                    <button class="dropdown-item" type="button"
+                                            th:data-action="@{/funcionarios/{id}/status(id=${funcionario.id})}"
+                                            th:data-confirm="${funcionario.ativo} ? 'Deseja desativar este funcionário?' : 'Deseja ativar este funcionário?'">
+                                        <span th:text="${funcionario.ativo} ? 'Desativar' : 'Ativar'">Desativar</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="~{fragments/pagination :: pagination(${pagina})}"></div>
+    </div>
+</th:block>
+</body>
+</html>

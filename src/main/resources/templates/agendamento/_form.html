@@ -1,0 +1,65 @@
+<div th:fragment="fields" xmlns:th="http://www.thymeleaf.org">
+    <div th:if="${#fields.hasGlobalErrors()}" class="app-toast toast-error mb-3">
+        <i class="bi bi-exclamation-circle"></i>
+        <span th:each="err : ${#fields.globalErrors()}" th:text="${err}">Erro</span>
+    </div>
+    <h2 class="form-section-title">Novo agendamento</h2>
+    <div class="mb-3">
+        <label class="form-label" for="clienteId">Cliente</label>
+        <select class="form-select" id="clienteId" th:field="*{clienteId}" th:classappend="${#fields.hasErrors('clienteId')} ? ' is-invalid'">
+            <option value="">Selecione</option>
+            <option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nome}"></option>
+        </select>
+        <div class="invalid-feedback" th:errors="*{clienteId}"></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="funcionarioId">Profissional</label>
+        <select class="form-select" id="funcionarioId" th:field="*{funcionarioId}" th:classappend="${#fields.hasErrors('funcionarioId')} ? ' is-invalid'">
+            <option value="">Selecione</option>
+            <option th:each="funcionario : ${funcionarios}" th:value="${funcionario.id}" th:text="${funcionario.nome}"></option>
+        </select>
+        <div class="invalid-feedback" th:errors="*{funcionarioId}"></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="servicoId">Serviço</label>
+        <select class="form-select" id="servicoId" th:field="*{servicoId}" th:classappend="${#fields.hasErrors('servicoId')} ? ' is-invalid'">
+            <option value="">Selecione</option>
+            <option th:each="servico : ${servicos}" th:value="${servico.id}"
+                    th:text="|${servico.nome} · ${servico.duracaoMinutos} min|"
+                    th:data-duracao="${servico.duracaoMinutos}"
+                    th:data-valor="${servico.valor}"></option>
+        </select>
+        <div class="invalid-feedback" th:errors="*{servicoId}"></div>
+        <small class="text-muted">Duração: <span id="duracaoInfo">-</span></small>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label" for="data">Data</label>
+            <input class="form-control" id="data" type="date" th:field="*{data}" th:classappend="${#fields.hasErrors('data')} ? ' is-invalid'">
+            <div class="invalid-feedback" th:errors="*{data}"></div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label" for="horaInicio">Horário</label>
+            <input class="form-control" id="horaInicio" type="time" th:field="*{horaInicio}" th:classappend="${#fields.hasErrors('horaInicio')} ? ' is-invalid'">
+            <div class="invalid-feedback" th:errors="*{horaInicio}"></div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label" for="horaFim">Fim</label>
+            <input class="form-control" id="horaFim" type="time" th:field="*{horaFim}" readonly>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="valor">Valor</label>
+        <input class="form-control" id="valor" type="number" min="0" step="0.01" th:field="*{valor}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="situacao">Situação</label>
+        <select class="form-select" id="situacao" th:field="*{situacao}">
+            <option th:each="item : ${situacoes}" th:value="${item}" th:text="${item.descricao}"></option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="observacao">Observação</label>
+        <textarea class="form-control" id="observacao" rows="3" th:field="*{observacao}"></textarea>
+    </div>
+</div>

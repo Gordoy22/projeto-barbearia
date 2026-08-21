@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Agendamentos | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Agendamentos</h1>
+            <p>Movimentação da agenda da barbearia.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-ghost" th:href="@{/agendamentos/calendario}">Agenda</a>
+            <a class="btn btn-dark" th:href="@{/agendamentos/novo}"><i class="bi bi-plus-lg"></i> Novo agendamento</a>
+        </div>
+    </div>
+
+    <form class="card-soft p-3 filter-bar" method="get" th:action="@{/agendamentos}">
+        <div>
+            <label class="form-label">De</label>
+            <input class="form-control" type="date" name="inicio" th:value="${inicio}">
+        </div>
+        <div>
+            <label class="form-label">Até</label>
+            <input class="form-control" type="date" name="fim" th:value="${fim}">
+        </div>
+        <div>
+            <label class="form-label">Profissional</label>
+            <select class="form-select" name="funcionarioId">
+                <option value="">Todos</option>
+                <option th:each="funcionario : ${funcionarios}" th:value="${funcionario.id}" th:text="${funcionario.nome}"
+                        th:selected="${funcionarioId == funcionario.id}"></option>
+            </select>
+        </div>
+        <div>
+            <label class="form-label">Cliente</label>
+            <select class="form-select" name="clienteId">
+                <option value="">Todos</option>
+                <option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nome}"
+                        th:selected="${clienteId == cliente.id}"></option>
+            </select>
+        </div>
+        <div>
+            <label class="form-label">Situação</label>
+            <select class="form-select" name="situacao">
+                <option value="">Todas</option>
+                <option th:each="item : ${situacoes}" th:value="${item}" th:text="${item.descricao}"
+                        th:selected="${situacao == item}"></option>
+            </select>
+        </div>
+        <div class="d-flex align-items-end">
+            <button class="btn btn-dark w-100" type="submit">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="card-soft mt-3">
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Profissional</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${pagina.empty}">
+                    <td colspan="8" class="text-center text-muted py-4">Nenhum agendamento encontrado.</td>
+                </tr>
+                <tr th:each="item : ${pagina.content}">
+                    <td th:text="${#temporals.format(item.data, 'dd/MM/yyyy')}">21/08/2026</td>
+                    <td th:text="|${item.horaInicio} - ${item.horaFim}|">09:00 - 09:30</td>
+                    <td th:text="${item.clienteNome}">João</td>
+                    <td th:text="${item.servicoNome}">Corte</td>
+                    <td th:text="${item.funcionarioNome}">Carlos</td>
+                    <td th:text="${#numbers.formatCurrency(item.valor)}">R$ 45,00</td>
+                    <td>
+                        <span class="badge-status" th:classappend="${'badge-' + #strings.toLowerCase(item.situacao)}"
+                              th:text="${item.situacao.descricao}">Agendado</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-ghost btn-sm" data-bs-toggle="dropdown">Ações</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" th:href="@{/agendamentos/{id}(id=${item.id})}">Visualizar</a></li>
+                                <li><a class="dropdown-item" th:href="@{/agendamentos/{id}/editar(id=${item.id})}">Editar</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="~{fragments/pagination :: pagination(${pagina})}"></div>
+    </div>
+</th:block>
+</body>
+</html>

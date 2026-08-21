@@ -1,0 +1,35 @@
+<div th:fragment="fields" xmlns:th="http://www.thymeleaf.org">
+    <h2 class="form-section-title">Dados do funcionário</h2>
+    <div class="mb-3">
+        <label class="form-label" for="nome">Nome</label>
+        <input class="form-control" id="nome" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? ' is-invalid'">
+        <div class="invalid-feedback" th:errors="*{nome}"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="telefone">Telefone</label>
+            <input class="form-control" id="telefone" data-mask="phone" th:field="*{telefone}">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="email">E-mail</label>
+            <input class="form-control" id="email" type="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'">
+            <div class="invalid-feedback" th:errors="*{email}"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="cargo">Cargo</label>
+            <input class="form-control" id="cargo" th:field="*{cargo}" th:classappend="${#fields.hasErrors('cargo')} ? ' is-invalid'">
+            <div class="invalid-feedback" th:errors="*{cargo}"></div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label" for="dataAdmissao">Data de admissão</label>
+            <input class="form-control" id="dataAdmissao" type="date" th:field="*{dataAdmissao}">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label class="form-label" for="percentualComissao">Comissão (%)</label>
+            <input class="form-control" id="percentualComissao" type="number" step="0.01" min="0" max="100" th:field="*{percentualComissao}" th:classappend="${#fields.hasErrors('percentualComissao')} ? ' is-invalid'">
+            <div class="invalid-feedback" th:errors="*{percentualComissao}"></div>
+        </div>
+    </div>
+</div>

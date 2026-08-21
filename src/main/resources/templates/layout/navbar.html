@@ -1,0 +1,29 @@
+<header class="app-navbar" th:fragment="navbar" xmlns:th="http://www.thymeleaf.org">
+    <div class="navbar-left">
+        <button class="icon-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Abrir menu">
+            <i class="bi bi-list"></i>
+        </button>
+        <button class="icon-btn d-none d-lg-inline-flex" type="button" id="sidebarToggle" aria-label="Recolher menu">
+            <i class="bi bi-layout-sidebar-inset"></i>
+        </button>
+        <div class="navbar-search d-none d-md-flex">
+            <i class="bi bi-search"></i>
+            <span>Sistema de gestão da barbearia</span>
+        </div>
+    </div>
+    <div class="navbar-right">
+        <div class="user-chip">
+            <span class="user-avatar" th:text="${usuarioLogado != null ? #strings.substring(usuarioLogado.nome,0,1) : 'A'}">A</span>
+            <div class="user-meta">
+                <strong th:text="${usuarioLogado != null ? usuarioLogado.nome : 'Usuário'}">Administrador</strong>
+                <small th:text="${usuarioLogado != null ? usuarioLogado.perfil.descricao : ''}">Administrador</small>
+            </div>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn btn-ghost" type="submit">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="d-none d-sm-inline">Sair</span>
+            </button>
+        </form>
+    </div>
+</header>

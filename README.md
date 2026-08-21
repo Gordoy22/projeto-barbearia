@@ -1,18 +1,108 @@
-## Getting Started
+# BARBER — Sistema de Gestão para Barbearia
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Sistema web completo para gerenciamento de barbearia, com cadastros, agendamentos, controle de conflitos de horário e agenda visual.
 
-## Folder Structure
+## Tecnologias
 
-The workspace contains two folders by default, where:
+- Java 21 ou superior
+- Spring Boot 3.5
+- Spring MVC
+- Spring Data JPA / Hibernate
+- Spring Security
+- Thymeleaf
+- PostgreSQL
+- Maven
+- Bootstrap 5 e Bootstrap Icons
+- FullCalendar
+- HTML5, CSS3 e JavaScript
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Requisitos
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- JDK 21+
+- Maven 3.9+
+- PostgreSQL 16+ (porta 5432)
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Configuração do PostgreSQL
 
-## Dependency Management
+Crie o banco de dados:
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+```sql
+CREATE DATABASE barbearia;
+```
+
+Credenciais padrão em `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/barbearia
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+```
+
+Se a senha do seu PostgreSQL for diferente, altere o arquivo acima.
+
+Durante o desenvolvimento o Hibernate atualiza o esquema automaticamente:
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+## Execução
+
+Na pasta do projeto:
+
+```bash
+mvn clean install
+```
+
+```bash
+mvn spring-boot:run
+```
+
+Se o Maven global não estiver disponível neste terminal, use o wrapper:
+
+```bash
+mvnw.cmd spring-boot:run
+```
+
+O Maven também foi instalado em `%USERPROFILE%\tools\apache-maven-3.9.11` e adicionado ao PATH do usuário.
+
+Acesse [http://localhost:8080](http://localhost:8080). O sistema redireciona para `/login`.
+
+## Usuário inicial
+
+Os dados de demonstração são criados somente se o banco estiver vazio.
+
+| Campo | Valor |
+| --- | --- |
+| E-mail | `admin@barbearia.com` |
+| Senha | `admin123` |
+
+Também são cadastrados os profissionais Carlos Silva e Marcos Souza, além dos serviços Corte Masculino, Barba e Corte + Barba.
+
+## Funcionalidades
+
+- Login com Spring Security e senha em BCrypt
+- Dashboard com resumo do dia
+- CRUD de clientes, funcionários e serviços (ativação/desativação lógica)
+- Agendamentos com cálculo automático do horário final
+- Impedimento de conflito de horário para o mesmo profissional
+- Agenda em calendário (dia, semana e mês)
+- Layout responsivo com menu lateral recolhível e offcanvas no celular
+
+## Estrutura de diretórios
+
+```text
+src/main/java/br/com/barbearia
+  config/
+  controller/
+  dto/
+  entity/
+  enums/
+  exception/
+  repository/
+  service/
+src/main/resources
+  templates/
+  static/
+  application.properties
+```

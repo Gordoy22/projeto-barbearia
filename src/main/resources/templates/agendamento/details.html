@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Agendamento | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Detalhes do agendamento</h1>
+            <p th:text="|${agendamento.clienteNome} · ${agendamento.servicoNome}|">Cliente</p>
+        </div>
+        <a class="btn btn-ghost" th:href="@{/agendamentos/{id}/editar(id=${agendamento.id})}">Editar</a>
+    </div>
+    <div class="card-soft form-card">
+        <div class="detail-grid">
+            <div class="detail-item"><span>Cliente</span><strong th:text="${agendamento.clienteNome}"></strong></div>
+            <div class="detail-item"><span>Profissional</span><strong th:text="${agendamento.funcionarioNome}"></strong></div>
+            <div class="detail-item"><span>Serviço</span><strong th:text="${agendamento.servicoNome}"></strong></div>
+            <div class="detail-item"><span>Data</span><strong th:text="${#temporals.format(agendamento.data, 'dd/MM/yyyy')}"></strong></div>
+            <div class="detail-item"><span>Horário</span><strong th:text="|${agendamento.horaInicio} - ${agendamento.horaFim}|"></strong></div>
+            <div class="detail-item"><span>Valor</span><strong th:text="${#numbers.formatCurrency(agendamento.valor)}"></strong></div>
+            <div class="detail-item"><span>Situação</span><strong th:text="${agendamento.situacao.descricao}"></strong></div>
+            <div class="detail-item" style="grid-column: 1 / -1">
+                <span>Observação</span>
+                <strong th:text="${agendamento.observacao} ?: '-'"></strong>
+            </div>
+        </div>
+
+        <form class="mt-4" th:action="@{/agendamentos/{id}/situacao(id=${agendamento.id})}" method="post">
+            <label class="form-label" for="situacao">Alterar situação</label>
+            <div class="d-flex gap-2 flex-wrap">
+                <select class="form-select" id="situacao" name="situacao" style="max-width: 280px">
+                    <option th:each="item : ${situacoes}" th:value="${item}" th:text="${item.descricao}"
+                            th:selected="${item == agendamento.situacao}"></option>
+                </select>
+                <button class="btn btn-dark" type="submit">Atualizar</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+</body>
+</html>

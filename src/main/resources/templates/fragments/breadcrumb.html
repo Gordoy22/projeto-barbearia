@@ -1,0 +1,8 @@
+<nav class="app-breadcrumb" th:fragment="breadcrumb (items)" xmlns:th="http://www.thymeleaf.org">
+    <a th:href="@{/}">Dashboard</a>
+    <th:block th:each="item, stat : ${items}">
+        <i class="bi bi-chevron-right"></i>
+        <a th:if="${item.url}" th:href="@{${item.url}}" th:text="${item.label}">Item</a>
+        <span th:unless="${item.url}" th:text="${item.label}">Atual</span>
+    </th:block>
+</nav>

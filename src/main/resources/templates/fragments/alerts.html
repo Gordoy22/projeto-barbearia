@@ -1,0 +1,12 @@
+<div th:fragment="alerts" xmlns:th="http://www.thymeleaf.org">
+    <div class="toast-stack">
+        <div th:if="${sucesso}" class="app-toast toast-success" role="status">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${sucesso}">Sucesso</span>
+        </div>
+        <div th:if="${erro}" class="app-toast toast-error" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:text="${erro}">Erro</span>
+        </div>
+    </div>
+</div>

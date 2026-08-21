@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Clientes | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Clientes</h1>
+            <p>Cadastro e consulta de clientes da barbearia.</p>
+        </div>
+        <a class="btn btn-dark" th:href="@{/clientes/novo}"><i class="bi bi-plus-lg"></i> Novo cliente</a>
+    </div>
+
+    <form class="toolbar" method="get" th:action="@{/clientes}">
+        <div class="search-field">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="search" name="busca" th:value="${busca}" placeholder="Buscar cliente...">
+        </div>
+        <button class="btn btn-ghost" type="submit">Buscar</button>
+    </form>
+
+    <div class="card-soft">
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>WhatsApp</th>
+                    <th>E-mail</th>
+                    <th>Situação</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${pagina.empty}">
+                    <td colspan="6" class="text-center text-muted py-4">Nenhum cliente encontrado.</td>
+                </tr>
+                <tr th:each="cliente : ${pagina.content}">
+                    <td th:text="${cliente.nome}">João Silva</td>
+                    <td th:text="${cliente.telefone}">45 99999-9999</td>
+                    <td th:text="${cliente.whatsapp}">45 99999-9999</td>
+                    <td th:text="${cliente.email}">email</td>
+                    <td>
+                        <span class="badge-status" th:classappend="${cliente.ativo} ? ' badge-ativo' : ' badge-inativo'"
+                              th:text="${cliente.ativo} ? 'Ativo' : 'Inativo'">Ativo</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-ghost btn-sm" data-bs-toggle="dropdown">Ações</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" th:href="@{/clientes/{id}(id=${cliente.id})}">Visualizar</a></li>
+                                <li><a class="dropdown-item" th:href="@{/clientes/{id}/editar(id=${cliente.id})}">Editar</a></li>
+                                <li>
+                                    <button class="dropdown-item" type="button"
+                                            th:data-action="@{/clientes/{id}/status(id=${cliente.id})}"
+                                            th:data-confirm="${cliente.ativo} ? 'Deseja desativar este cliente?' : 'Deseja ativar este cliente?'">
+                                        <span th:text="${cliente.ativo} ? 'Desativar' : 'Ativar'">Desativar</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="~{fragments/pagination :: pagination(${pagina})}"></div>
+    </div>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Serviços | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Serviços</h1>
+            <p>Catálogo de serviços oferecidos.</p>
+        </div>
+        <a class="btn btn-dark" th:href="@{/servicos/novo}"><i class="bi bi-plus-lg"></i> Novo serviço</a>
+    </div>
+
+    <form class="toolbar" method="get" th:action="@{/servicos}">
+        <div class="search-field">
+            <i class="bi bi-search"></i>
+            <input class="form-control" type="search" name="busca" th:value="${busca}" placeholder="Buscar serviço...">
+        </div>
+        <button class="btn btn-ghost" type="submit">Buscar</button>
+    </form>
+
+    <div class="card-soft">
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Duração</th>
+                    <th>Valor</th>
+                    <th>Situação</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${pagina.empty}">
+                    <td colspan="5" class="text-center text-muted py-4">Nenhum serviço encontrado.</td>
+                </tr>
+                <tr th:each="servico : ${pagina.content}">
+                    <td th:text="${servico.nome}">Corte Masculino</td>
+                    <td th:text="|${servico.duracaoMinutos} minutos|">30 minutos</td>
+                    <td th:text="${#numbers.formatCurrency(servico.valor)}">R$ 45,00</td>
+                    <td>
+                        <span class="badge-status" th:classappend="${servico.ativo} ? ' badge-ativo' : ' badge-inativo'"
+                              th:text="${servico.ativo} ? 'Ativo' : 'Inativo'">Ativo</span>
+                    </td>
+                    <td class="text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-ghost btn-sm" data-bs-toggle="dropdown">Ações</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" th:href="@{/servicos/{id}(id=${servico.id})}">Visualizar</a></li>
+                                <li><a class="dropdown-item" th:href="@{/servicos/{id}/editar(id=${servico.id})}">Editar</a></li>
+                                <li>
+                                    <button class="dropdown-item" type="button"
+                                            th:data-action="@{/servicos/{id}/status(id=${servico.id})}"
+                                            th:data-confirm="${servico.ativo} ? 'Deseja desativar este serviço?' : 'Deseja ativar este serviço?'">
+                                        <span th:text="${servico.ativo} ? 'Desativar' : 'Ativar'">Desativar</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="~{fragments/pagination :: pagination(${pagina})}"></div>
+    </div>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{::scripts})}">
+<head>
+    <title>Novo cliente | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Novo cliente</h1>
+            <p>Preencha os dados para cadastrar um cliente.</p>
+        </div>
+    </div>
+    <div class="card-soft form-card">
+        <form th:action="@{/clientes}" th:object="${cliente}" method="post">
+            <div th:replace="~{cliente/_form :: fields}"></div>
+            <div class="form-actions">
+                <a class="btn btn-ghost" th:href="@{/clientes}">Cancelar</a>
+                <button class="btn btn-dark" type="submit">Salvar</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/cliente.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<div th:fragment="fields" xmlns:th="http://www.thymeleaf.org">
+    <h2 class="form-section-title">Dados do cliente</h2>
+    <div class="mb-3">
+        <label class="form-label" for="nome">Nome</label>
+        <input class="form-control" id="nome" th:field="*{nome}" th:classappend="${#fields.hasErrors('nome')} ? ' is-invalid'">
+        <div class="invalid-feedback" th:errors="*{nome}"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="telefone">Telefone</label>
+            <input class="form-control" id="telefone" data-mask="phone" th:field="*{telefone}" th:classappend="${#fields.hasErrors('telefone')} ? ' is-invalid'">
+            <div class="invalid-feedback" th:errors="*{telefone}"></div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="whatsapp">WhatsApp</label>
+            <input class="form-control" id="whatsapp" data-mask="phone" th:field="*{whatsapp}">
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="email">E-mail</label>
+        <input class="form-control" id="email" type="email" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'">
+        <div class="invalid-feedback" th:errors="*{email}"></div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="dataNascimento">Data de nascimento</label>
+        <input class="form-control" id="dataNascimento" type="date" th:field="*{dataNascimento}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="observacao">Observações</label>
+        <textarea class="form-control" id="observacao" rows="4" th:field="*{observacao}"></textarea>
+    </div>
+</div>

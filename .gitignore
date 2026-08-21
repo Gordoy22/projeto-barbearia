@@ -1,19 +1,41 @@
-# Compilados
-bin/
+# Maven / Java
+target/
 *.class
 *.jar
 *.war
 *.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Logs
+*.log
+logs/
+
+# Spring Boot
+*.pid
+spring-boot-devtools.properties
 
 # IDEs
 .idea/
 *.iml
+*.ipr
+*.iws
 .vscode/
 .settings/
 .classpath
 .project
 .factorypath
+.apt_generated/
+.sts4-cache/
+*.swp
 
 # Sistema
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Ambiente
+.env
+.env.local
+*.db

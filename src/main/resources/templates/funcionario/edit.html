@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{::scripts})}">
+<head>
+    <title>Editar funcionário | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Editar funcionário</h1>
+            <p>Atualize os dados do profissional.</p>
+        </div>
+    </div>
+    <div class="card-soft form-card">
+        <form th:action="@{/funcionarios/{id}(id=${funcionario.id})}" th:object="${funcionario}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <div th:replace="~{funcionario/_form :: fields}"></div>
+            <div class="form-actions">
+                <a class="btn btn-ghost" th:href="@{/funcionarios}">Cancelar</a>
+                <button class="btn btn-dark" type="submit">Salvar</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/funcionario.js}"></script>
+</th:block>
+</body>
+</html>

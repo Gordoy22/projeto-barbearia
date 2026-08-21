@@ -1,0 +1,51 @@
+<nav class="app-pagination" th:fragment="pagination (pagina)" xmlns:th="http://www.thymeleaf.org"
+     th:if="${pagina.totalPages > 1}">
+    <span class="pagination-info"
+          th:text="|Página ${pagina.number + 1} de ${pagina.totalPages} · ${pagina.totalElements} registros|">
+    </span>
+    <ul class="pagination mb-0">
+        <li class="page-item" th:classappend="${pagina.first} ? ' disabled'">
+            <a class="page-link"
+               th:href="@{${currentPath}(
+                    page=${pagina.number - 1},
+                    size=${pagina.size},
+                    busca=${param.busca},
+                    inicio=${param.inicio},
+                    fim=${param.fim},
+                    funcionarioId=${param.funcionarioId},
+                    clienteId=${param.clienteId},
+                    situacao=${param.situacao}
+               )}">Anterior</a>
+        </li>
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, pagina.totalPages - 1)}"
+            th:if="${i >= pagina.number - 2 and i <= pagina.number + 2}"
+            th:classappend="${i == pagina.number} ? ' active'">
+            <a class="page-link"
+               th:href="@{${currentPath}(
+                    page=${i},
+                    size=${pagina.size},
+                    busca=${param.busca},
+                    inicio=${param.inicio},
+                    fim=${param.fim},
+                    funcionarioId=${param.funcionarioId},
+                    clienteId=${param.clienteId},
+                    situacao=${param.situacao}
+               )}"
+               th:text="${i + 1}">1</a>
+        </li>
+        <li class="page-item" th:classappend="${pagina.last} ? ' disabled'">
+            <a class="page-link"
+               th:href="@{${currentPath}(
+                    page=${pagina.number + 1},
+                    size=${pagina.size},
+                    busca=${param.busca},
+                    inicio=${param.inicio},
+                    fim=${param.fim},
+                    funcionarioId=${param.funcionarioId},
+                    clienteId=${param.clienteId},
+                    situacao=${param.situacao}
+               )}">Próxima</a>
+        </li>
+    </ul>
+</nav>

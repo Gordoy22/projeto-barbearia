@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Funcionário | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1 th:text="${funcionario.nome}">Funcionário</h1>
+            <p>Detalhes do profissional.</p>
+        </div>
+        <a class="btn btn-ghost" th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}">Editar</a>
+    </div>
+    <div class="card-soft form-card">
+        <div class="detail-grid">
+            <div class="detail-item"><span>Nome</span><strong th:text="${funcionario.nome}"></strong></div>
+            <div class="detail-item"><span>Cargo</span><strong th:text="${funcionario.cargo}"></strong></div>
+            <div class="detail-item"><span>Telefone</span><strong th:text="${funcionario.telefone} ?: '-'"></strong></div>
+            <div class="detail-item"><span>E-mail</span><strong th:text="${funcionario.email} ?: '-'"></strong></div>
+            <div class="detail-item">
+                <span>Admissão</span>
+                <strong th:text="${funcionario.dataAdmissao != null ? #temporals.format(funcionario.dataAdmissao, 'dd/MM/yyyy') : '-'}"></strong>
+            </div>
+            <div class="detail-item">
+                <span>Comissão</span>
+                <strong th:text="${funcionario.percentualComissao != null ? #numbers.formatDecimal(funcionario.percentualComissao, 1, 2, 'COMMA') + '%' : '-'}"></strong>
+            </div>
+            <div class="detail-item">
+                <span>Situação</span>
+                <strong th:text="${funcionario.ativo} ? 'Ativo' : 'Inativo'"></strong>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

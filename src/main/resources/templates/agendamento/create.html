@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{::scripts})}">
+<head>
+    <title>Novo agendamento | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Novo agendamento</h1>
+            <p>Reserve um horário para o cliente.</p>
+        </div>
+    </div>
+    <div class="card-soft form-card">
+        <form th:action="@{/agendamentos}" th:object="${agendamento}" method="post">
+            <div th:replace="~{agendamento/_form :: fields}"></div>
+            <div class="form-actions">
+                <a class="btn btn-ghost" th:href="@{/agendamentos}">Cancelar</a>
+                <button class="btn btn-dark" type="submit">Salvar agendamento</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/agendamento.js}"></script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<aside class="app-sidebar d-none d-lg-flex" th:fragment="sidebar" xmlns:th="http://www.thymeleaf.org">
+    <a class="sidebar-brand" th:href="@{/}">
+        <span class="brand-mark"><i class="bi bi-scissors"></i></span>
+        <span class="brand-text">BARBER</span>
+    </a>
+    <nav class="sidebar-nav" th:insert="~{layout/sidebar :: menu}"></nav>
+</aside>
+
+<th:block th:fragment="menu" xmlns:th="http://www.thymeleaf.org">
+    <div class="nav-section">Menu</div>
+    <a class="nav-link" th:href="@{/}" th:classappend="${currentPath == '/' ? ' active' : ''}">
+        <i class="bi bi-grid"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <div class="nav-section">Cadastros</div>
+    <a class="nav-link" th:href="@{/clientes}" th:classappend="${#strings.startsWith(currentPath, '/clientes') ? ' active' : ''}">
+        <i class="bi bi-people"></i>
+        <span>Clientes</span>
+    </a>
+    <a class="nav-link" th:href="@{/funcionarios}" th:classappend="${#strings.startsWith(currentPath, '/funcionarios') ? ' active' : ''}">
+        <i class="bi bi-person-badge"></i>
+        <span>Funcionários</span>
+    </a>
+    <a class="nav-link" th:href="@{/servicos}" th:classappend="${#strings.startsWith(currentPath, '/servicos') ? ' active' : ''}">
+        <i class="bi bi-list-check"></i>
+        <span>Serviços</span>
+    </a>
+
+    <div class="nav-section">Movimentações</div>
+    <a class="nav-link" th:href="@{/agendamentos}"
+       th:classappend="${currentPath == '/agendamentos' or (#strings.startsWith(currentPath, '/agendamentos/') and !#strings.startsWith(currentPath, '/agendamentos/calendario')) ? ' active' : ''}">
+        <i class="bi bi-calendar-check"></i>
+        <span>Agendamentos</span>
+    </a>
+    <a class="nav-link" th:href="@{/agendamentos/calendario}" th:classappend="${#strings.startsWith(currentPath, '/agendamentos/calendario') ? ' active' : ''}">
+        <i class="bi bi-calendar3"></i>
+        <span>Agenda</span>
+    </a>
+</th:block>
+
+<div class="offcanvas offcanvas-start app-offcanvas" tabindex="-1" id="sidebarOffcanvas" th:fragment="offcanvas" xmlns:th="http://www.thymeleaf.org">
+    <div class="offcanvas-header">
+        <a class="sidebar-brand" th:href="@{/}">
+            <span class="brand-mark"><i class="bi bi-scissors"></i></span>
+            <span class="brand-text">BARBER</span>
+        </a>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+        <nav class="sidebar-nav" th:insert="~{layout/sidebar :: menu}"></nav>
+    </div>
+</div>

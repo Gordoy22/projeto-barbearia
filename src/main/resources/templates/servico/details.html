@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Serviço | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1 th:text="${servico.nome}">Serviço</h1>
+            <p>Detalhes do serviço.</p>
+        </div>
+        <a class="btn btn-ghost" th:href="@{/servicos/{id}/editar(id=${servico.id})}">Editar</a>
+    </div>
+    <div class="card-soft form-card">
+        <div class="detail-grid">
+            <div class="detail-item"><span>Nome</span><strong th:text="${servico.nome}"></strong></div>
+            <div class="detail-item"><span>Duração</span><strong th:text="|${servico.duracaoMinutos} minutos|"></strong></div>
+            <div class="detail-item"><span>Valor</span><strong th:text="${#numbers.formatCurrency(servico.valor)}"></strong></div>
+            <div class="detail-item"><span>Situação</span><strong th:text="${servico.ativo} ? 'Ativo' : 'Inativo'"></strong></div>
+            <div class="detail-item" style="grid-column: 1 / -1">
+                <span>Descrição</span>
+                <strong th:text="${servico.descricao} ?: '-'"></strong>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

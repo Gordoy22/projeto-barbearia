@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Novo serviço | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1>Novo serviço</h1>
+            <p>Cadastre um serviço oferecido pela barbearia.</p>
+        </div>
+    </div>
+    <div class="card-soft form-card">
+        <form th:action="@{/servicos}" th:object="${servico}" method="post">
+            <div th:replace="~{servico/_form :: fields}"></div>
+            <div class="form-actions">
+                <a class="btn btn-ghost" th:href="@{/servicos}">Cancelar</a>
+                <button class="btn btn-dark" type="submit">Salvar</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+</body>
+</html>

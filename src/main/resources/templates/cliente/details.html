@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content}, ~{})}">
+<head>
+    <title>Cliente | BARBER</title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="page-header">
+        <div>
+            <h1 th:text="${cliente.nome}">Cliente</h1>
+            <p>Detalhes do cadastro.</p>
+        </div>
+        <a class="btn btn-ghost" th:href="@{/clientes/{id}/editar(id=${cliente.id})}">Editar</a>
+    </div>
+    <div class="card-soft form-card">
+        <div class="detail-grid">
+            <div class="detail-item"><span>Nome</span><strong th:text="${cliente.nome}"></strong></div>
+            <div class="detail-item"><span>Telefone</span><strong th:text="${cliente.telefone}"></strong></div>
+            <div class="detail-item"><span>WhatsApp</span><strong th:text="${cliente.whatsapp} ?: '-'"></strong></div>
+            <div class="detail-item"><span>E-mail</span><strong th:text="${cliente.email} ?: '-'"></strong></div>
+            <div class="detail-item">
+                <span>Data de nascimento</span>
+                <strong th:text="${cliente.dataNascimento != null ? #temporals.format(cliente.dataNascimento, 'dd/MM/yyyy') : '-'}"></strong>
+            </div>
+            <div class="detail-item">
+                <span>Situação</span>
+                <strong th:text="${cliente.ativo} ? 'Ativo' : 'Inativo'"></strong>
+            </div>
+            <div class="detail-item" style="grid-column: 1 / -1">
+                <span>Observações</span>
+                <strong th:text="${cliente.observacao} ?: '-'"></strong>
+            </div>
+            <div class="detail-item">
+                <span>Data de cadastro</span>
+                <strong th:text="${cliente.dataCadastro != null ? #temporals.format(cliente.dataCadastro, 'dd/MM/yyyy HH:mm') : '-'}"></strong>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>
