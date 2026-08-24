@@ -1,0 +1,3 @@
+# Estado local do Vagrant (específico de cada máquina, não deve ir pro git)
+.vagrant/
+*.log

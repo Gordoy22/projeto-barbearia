@@ -1,0 +1,31 @@
+# =============================================================================
+# inventory.yml — Inventário da infraestrutura do Projeto Barbearia
+# -----------------------------------------------------------------------------
+# Documenta cada VM da infraestrutura, seu papel e como alcançá-la.
+#
+# Este projeto usa o shell provisioner do próprio Vagrant (ver README.md,
+# seção "Por que shell e não Ansible"), então este arquivo não é consumido
+# por nenhuma ferramenta automaticamente — ele existe para deixar a topologia
+# explícita e documentada, e para servir de inventário Ansible pronto caso o
+# projeto evolua para usar Ansible depois (o formato já segue o padrão de
+# inventário do Ansible: all -> hosts -> <nome> -> vars).
+# =============================================================================
+
+all:
+  hosts:
+    barbearia-app:
+      role: app-server              # roda o backend Spring Boot + PostgreSQL
+      ip: 192.168.56.10             # IP fixo definido em config.yml / Vagrantfile
+      ssh_user: vagrant
+      ssh_access: "vagrant ssh"     # chave gerenciada automaticamente pelo Vagrant (insert_key)
+      ssh_external: "ssh vagrant@192.168.56.10"  # funciona se você tiver uma chave pública em ~/.ssh (ver README)
+      ports:
+        - "8080/tcp"   # aplicação Spring Boot (Thymeleaf + REST), exposta na rede privada e via forwarded_port no host
+        - "5432/tcp"   # PostgreSQL, acessível apenas dentro da rede privada 192.168.56.0/24
+      services:
+        - temurin-21-jdk
+        - maven
+        - postgresql-16
+        - barbearia.service   # unit systemd que roda o .jar da aplicação
+      provisioned_by: scripts/provision.sh
+      config_template: templates/application.properties.j2

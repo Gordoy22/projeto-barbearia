@@ -1,0 +1,83 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#
+# Vagrantfile — Infraestrutura do Projeto Integrador (Sistema de Barbearia)
+#
+# Todos os parâmetros (IP, memória, CPU, portas, credenciais de banco) vêm de
+# config.yml — não há valores mágicos hardcoded aqui. Ver README.md para o
+# passo a passo completo e o diagrama da infraestrutura.
+
+require "yaml"
+
+CONFIG_FILE = File.join(File.dirname(__FILE__), "config.yml")
+cfg = YAML.load_file(CONFIG_FILE)
+
+vm_cfg  = cfg.fetch("vm")
+app_cfg = cfg.fetch("app")
+db_cfg  = cfg.fetch("database")
+
+Vagrant.configure("2") do |config|
+  config.vm.box      = vm_cfg["box"]
+  config.vm.hostname = vm_cfg["hostname"]
+
+  # IP fixo na rede privada host-only (documentado em inventory.yml)
+  config.vm.network "private_network", ip: vm_cfg["private_network_ip"]
+
+  # Acesso alternativo via localhost (além do IP fixo da rede privada)
+  config.vm.network "forwarded_port",
+    guest: vm_cfg["forwarded_app_port_guest"],
+    host:  vm_cfg["forwarded_app_port_host"],
+    auto_correct: true
+
+  # Código-fonte do projeto Java (uma pasta acima desta infra/) é
+  # espelhado dentro da VM em /vagrant/app
+  config.vm.synced_folder "..", "/vagrant/app"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name   = vm_cfg["hostname"]
+    vb.memory = vm_cfg["memory_mb"]
+    vb.cpus   = vm_cfg["cpus"]
+  end
+
+  # `vagrant ssh` funciona sem senha automaticamente: por padrão o Vagrant
+  # gera/injeta sua própria keypair na VM (insert_key = true, o default).
+
+  # Se existir uma chave pública SSH sua no host (~/.ssh/id_ed25519.pub ou
+  # ~/.ssh/id_rsa.pub), ela é copiada para dentro da VM e autorizada pelo
+  # script de provisionamento, permitindo SSH externo
+  # (ex: `ssh vagrant@192.168.56.10`) sem digitar senha.
+  ["id_ed25519.pub", "id_rsa.pub"].each do |key_file|
+    host_key_path = File.expand_path("~/.ssh/#{key_file}")
+    if File.exist?(host_key_path)
+      config.vm.provision "file",
+        source: host_key_path,
+        destination: "/tmp/host_external_key.pub"
+      break
+    end
+  end
+
+  # Provisionamento via shell script (idempotente — ver scripts/provision.sh).
+  # Roda em todo `vagrant up` e em todo `vagrant provision`/`vagrant reload --provision`.
+  config.vm.provision "shell",
+    path: "scripts/provision.sh",
+    env: {
+      "DB_NAME"     => db_cfg["name"].to_s,
+      "DB_USER"     => db_cfg["username"].to_s,
+      "DB_PASSWORD" => db_cfg["password"].to_s,
+      "DB_PORT"     => db_cfg["port"].to_s,
+      "APP_PORT"    => app_cfg["port"].to_s,
+      "APP_JAR"     => app_cfg["jar_name"].to_s,
+      "APP_HOME"    => app_cfg["install_dir"].to_s,
+      "APP_USER"    => app_cfg["system_user"].to_s,
+      "VM_NETWORK"  => vm_cfg["private_network_ip"].to_s.sub(/\.\d+$/, ".0/24"),
+    }
+
+  config.vm.post_up_message = <<~MSG
+    ==========================================================================
+    Barbearia app-server pronto!
+      App:  http://#{vm_cfg["private_network_ip"]}:#{app_cfg["port"]}
+      Alt:  http://localhost:#{vm_cfg["forwarded_app_port_host"]}
+      SSH:  vagrant ssh
+    ==========================================================================
+  MSG
+end

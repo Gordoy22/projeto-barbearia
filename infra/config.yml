@@ -1,0 +1,30 @@
+# =============================================================================
+# config.yml — Variáveis da infraestrutura do Projeto Barbearia
+# -----------------------------------------------------------------------------
+# Única fonte de verdade para os parâmetros configuráveis da VM e da aplicação.
+# NADA aqui deve estar hardcoded no Vagrantfile, nos scripts ou nos templates:
+# eles apenas leem estes valores. Para mudar IP, memória, porta, credenciais
+# do banco etc., edite só este arquivo e rode `vagrant up` (ou
+# `vagrant reload --provision` se a VM já existir).
+# =============================================================================
+
+vm:
+  hostname: barbearia-app
+  box: ubuntu/jammy64
+  private_network_ip: 192.168.56.10   # IP fixo da VM (rede host-only)
+  memory_mb: 2048
+  cpus: 2
+  forwarded_app_port_host: 8080       # http://localhost:8080 no seu Windows
+  forwarded_app_port_guest: 8080
+
+app:
+  port: 8080
+  jar_name: barbearia-1.0.0.jar
+  install_dir: /opt/barbearia
+  system_user: barbearia
+
+database:
+  name: barbearia
+  username: postgres
+  password: postgres
+  port: 5432

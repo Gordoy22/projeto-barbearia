@@ -1,0 +1,5 @@
+# Garante final de linha LF nos scripts, mesmo editando no Windows —
+# um shell script com CRLF falha dentro da VM Linux ("$'\r': command not found").
+*.sh text eol=lf
+*.j2 text eol=lf
+Vagrantfile text eol=lf

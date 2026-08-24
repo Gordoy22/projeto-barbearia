@@ -22,6 +22,12 @@ Sistema web completo para gerenciamento de barbearia, com cadastros, agendamento
 - Maven 3.9+
 - PostgreSQL 16+ (porta 5432)
 
+## Infraestrutura (VM)
+
+Para subir o backend + PostgreSQL automaticamente em uma VM Vagrant/VirtualBox
+(sem instalar nada além de Vagrant e VirtualBox no seu PC), veja
+[`infra/README.md`](infra/README.md).
+
 ## Configuração do PostgreSQL
 
 Crie o banco de dados:

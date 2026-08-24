@@ -1,0 +1,42 @@
+# =============================================================================
+# application.properties — GERADO AUTOMATICAMENTE pelo provisionamento da VM
+# -----------------------------------------------------------------------------
+# Template: infra/templates/application.properties.j2
+# Preenchido por: infra/scripts/provision.sh (via envsubst)
+# Variáveis vindas de: infra/config.yml
+#
+# NÃO edite o arquivo gerado em ${APP_HOME}/config/application.properties
+# diretamente — ele é sobrescrito a cada `vagrant provision`. Para mudar
+# porta, banco, usuário ou senha, edite infra/config.yml e rode:
+#   vagrant provision
+# =============================================================================
+
+spring.application.name=barbearia
+
+server.port=${APP_PORT}
+server.servlet.encoding.charset=UTF-8
+server.servlet.encoding.force=true
+
+spring.datasource.url=jdbc:postgresql://localhost:${DB_PORT}/${DB_NAME}
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.jdbc.time_zone=America/Sao_Paulo
+
+spring.thymeleaf.cache=false
+
+spring.web.locale=pt_BR
+spring.mvc.format.date=iso
+spring.mvc.format.time=HH:mm
+spring.mvc.format.date-time=iso
+
+spring.messages.basename=messages
+spring.messages.encoding=UTF-8
+
+server.error.include-message=always
+server.error.whitelabel.enabled=false

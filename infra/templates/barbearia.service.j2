@@ -1,0 +1,24 @@
+# =============================================================================
+# barbearia.service — GERADO AUTOMATICAMENTE pelo provisionamento da VM
+# -----------------------------------------------------------------------------
+# Template: infra/templates/barbearia.service.j2
+# Preenchido por: infra/scripts/provision.sh (via envsubst)
+# Instalado em: /etc/systemd/system/barbearia.service
+# =============================================================================
+[Unit]
+Description=Sistema Barbearia - Spring Boot Application
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=${APP_USER}
+Group=${APP_USER}
+WorkingDirectory=${APP_HOME}
+ExecStart=/usr/bin/java -jar ${APP_HOME}/${APP_JAR}
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
