@@ -1,0 +1,7 @@
+---
+# 3) Maven — vem direto do repositório padrão do Ubuntu, sem repo extra.
+
+- name: Instala o Maven
+  ansible.builtin.apt:
+    name: maven
+    state: present

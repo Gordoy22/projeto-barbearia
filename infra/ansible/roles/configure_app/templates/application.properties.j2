@@ -1,11 +1,11 @@
 # =============================================================================
-# application.properties — GERADO AUTOMATICAMENTE pelo provisionamento da VM
+# application.properties — GERADO AUTOMATICAMENTE pelo Ansible
 # -----------------------------------------------------------------------------
-# Template: infra/templates/application.properties.j2
-# Preenchido por: infra/scripts/provision.sh (via envsubst)
-# Variáveis vindas de: infra/config.yml
+# Template: infra/ansible/roles/configure_app/templates/application.properties.j2
+# Preenchido por: infra/ansible/roles/configure_app (módulo template)
+# Variáveis vindas de: infra/config.yml (via Vagrantfile -> extra_vars)
 #
-# NÃO edite o arquivo gerado em ${APP_HOME}/config/application.properties
+# NÃO edite o arquivo gerado em {{ app_home }}/config/application.properties
 # diretamente — ele é sobrescrito a cada `vagrant provision`. Para mudar
 # porta, banco, usuário ou senha, edite infra/config.yml e rode:
 #   vagrant provision
@@ -13,13 +13,13 @@
 
 spring.application.name=barbearia
 
-server.port=${APP_PORT}
+server.port={{ app_port }}
 server.servlet.encoding.charset=UTF-8
 server.servlet.encoding.force=true
 
-spring.datasource.url=jdbc:postgresql://localhost:${DB_PORT}/${DB_NAME}
-spring.datasource.username=${DB_USER}
-spring.datasource.password=${DB_PASSWORD}
+spring.datasource.url=jdbc:postgresql://localhost:{{ db_port }}/{{ db_name }}
+spring.datasource.username={{ db_user }}
+spring.datasource.password={{ db_password }}
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 spring.jpa.hibernate.ddl-auto=update

@@ -1,14 +1,16 @@
 # =============================================================================
 # inventory.yml — Inventário da infraestrutura do Projeto Barbearia
 # -----------------------------------------------------------------------------
-# Documenta cada VM da infraestrutura, seu papel e como alcançá-la.
+# Documenta cada VM da infraestrutura, seu papel e como alcançá-la, em
+# formato legível por humanos (all -> hosts -> <nome> -> vars, padrão de
+# inventário do Ansible).
 #
-# Este projeto usa o shell provisioner do próprio Vagrant (ver README.md,
-# seção "Por que shell e não Ansible"), então este arquivo não é consumido
-# por nenhuma ferramenta automaticamente — ele existe para deixar a topologia
-# explícita e documentada, e para servir de inventário Ansible pronto caso o
-# projeto evolua para usar Ansible depois (o formato já segue o padrão de
-# inventário do Ansible: all -> hosts -> <nome> -> vars).
+# Este arquivo é documental — não é lido por nenhuma ferramenta. O
+# inventário FUNCIONAL, de fato usado pelo Ansible em tempo de execução, é
+# ansible/inventory.ini (só "localhost", porque o Ansible roda dentro da
+# própria VM via ansible_local — ver README.md, seção "Como o Ansible é
+# usado"). Se o projeto evoluir para múltiplas VMs, este é o arquivo que
+# vira o inventário Ansible de verdade.
 # =============================================================================
 
 all:
@@ -27,5 +29,5 @@ all:
         - maven
         - postgresql-16
         - barbearia.service   # unit systemd que roda o .jar da aplicação
-      provisioned_by: scripts/provision.sh
-      config_template: templates/application.properties.j2
+      provisioned_by: ansible/playbook.yml
+      config_template: ansible/roles/configure_app/templates/application.properties.j2

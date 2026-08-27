@@ -56,21 +56,32 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # Provisionamento via shell script (idempotente — ver scripts/provision.sh).
-  # Roda em todo `vagrant up` e em todo `vagrant provision`/`vagrant reload --provision`.
-  config.vm.provision "shell",
-    path: "scripts/provision.sh",
-    env: {
-      "DB_NAME"     => db_cfg["name"].to_s,
-      "DB_USER"     => db_cfg["username"].to_s,
-      "DB_PASSWORD" => db_cfg["password"].to_s,
-      "DB_PORT"     => db_cfg["port"].to_s,
-      "APP_PORT"    => app_cfg["port"].to_s,
-      "APP_JAR"     => app_cfg["jar_name"].to_s,
-      "APP_HOME"    => app_cfg["install_dir"].to_s,
-      "APP_USER"    => app_cfg["system_user"].to_s,
-      "VM_NETWORK"  => vm_cfg["private_network_ip"].to_s.sub(/\.\d+$/, ".0/24"),
+  # Provisionamento via Ansible (idempotente — ver ansible/playbook.yml).
+  # Roda com "ansible_local": o Ansible é instalado e executado DENTRO da
+  # própria VM (não precisa de Ansible instalado no Windows). Dispara em
+  # todo `vagrant up` e em todo `vagrant provision`/`vagrant reload --provision`.
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook           = "ansible/playbook.yml"
+    ansible.inventory_path     = "ansible/inventory.ini"
+    ansible.config_file        = "ansible/ansible.cfg"
+    # Por padrão o Vagrant passa "--limit=<nome-da-maquina>" (ex: "default")
+    # pro ansible-playbook, esperando um host com esse nome no inventário.
+    # Nosso inventory.ini usa "localhost" (grupo app_servers), então força
+    # --limit=all para não filtrar todo mundo fora.
+    ansible.limit = "all"
+    ansible.extra_vars = {
+      db_name:     db_cfg["name"].to_s,
+      db_user:     db_cfg["username"].to_s,
+      db_password: db_cfg["password"].to_s,
+      db_port:     db_cfg["port"].to_s,
+      app_port:    app_cfg["port"].to_s,
+      app_jar:     app_cfg["jar_name"].to_s,
+      app_home:    app_cfg["install_dir"].to_s,
+      app_user:    app_cfg["system_user"].to_s,
+      vm_network:  vm_cfg["private_network_ip"].to_s.sub(/\.\d+$/, ".0/24"),
     }
+  end
 
   config.vm.post_up_message = <<~MSG
     ==========================================================================

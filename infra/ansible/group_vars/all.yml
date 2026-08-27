@@ -1,0 +1,25 @@
+# =============================================================================
+# group_vars/all.yml — Valores default das variáveis do playbook
+# -----------------------------------------------------------------------------
+# Usados apenas se ninguém os sobrescrever (ex: rodando o playbook direto
+# dentro da VM, sem passar por Vagrant). Em uso normal (`vagrant up` /
+# `vagrant provision`), o Vagrantfile lê ../../config.yml e injeta estes
+# mesmos valores via --extra-vars, que têm precedência sobre este arquivo —
+# ou seja, config.yml continua sendo a única fonte de verdade.
+# =============================================================================
+db_name: barbearia
+db_user: postgres
+db_password: postgres
+db_port: 5432
+
+app_port: 8080
+app_jar: barbearia-1.0.0.jar
+app_home: /opt/barbearia
+app_user: barbearia
+
+vm_network: 192.168.56.0/24
+
+# Código-fonte do projeto Java (synced folder do Vagrant) e diretório de
+# build em filesystem nativo (ver role build_app para o motivo do vboxsf).
+project_src: /vagrant/app
+build_dir: /opt/barbearia-build

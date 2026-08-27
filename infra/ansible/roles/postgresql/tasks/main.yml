@@ -1,0 +1,113 @@
+---
+# 4) PostgreSQL 16 — repositório oficial PGDG (Ubuntu 22.04 "jammy" traz
+#    PostgreSQL 14 por padrão; o repo do postgresql.org garante a versão 16).
+
+- name: Baixa e instala a chave GPG do repositório PGDG
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/keyrings/postgresql.gpg
+  args:
+    creates: /etc/apt/keyrings/postgresql.gpg
+    executable: /bin/bash
+
+- name: Registra o repositório apt do PGDG
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt {{ ubuntu_codename }}-pgdg main"
+    filename: pgdg
+    state: present
+    update_cache: true
+
+- name: Instala o PostgreSQL 16
+  ansible.builtin.apt:
+    name: postgresql-16
+    state: present
+
+- name: Garante que o serviço PostgreSQL está habilitado e rodando
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Espera o PostgreSQL aceitar conexões
+  ansible.builtin.command: pg_isready
+  become_user: postgres
+  register: pg_ready
+  until: pg_ready.rc == 0
+  retries: 30
+  delay: 1
+  changed_when: false
+
+# ---------------------------------------------------------------------------
+# Permite conexões dentro da rede privada da VM (útil para acesso externo
+# de ferramentas de administração de banco, ex: DBeaver, a partir do host).
+# ---------------------------------------------------------------------------
+- name: Descobre o arquivo de configuração do PostgreSQL
+  ansible.builtin.command: psql -tAc "SHOW config_file"
+  become_user: postgres
+  register: pg_config_file
+  changed_when: false
+
+- name: Define fatos de caminho do PostgreSQL
+  ansible.builtin.set_fact:
+    pg_conf_path: "{{ pg_config_file.stdout | trim }}"
+    pg_conf_dir: "{{ (pg_config_file.stdout | trim) | dirname }}"
+
+- name: "Habilita listen_addresses = '*' no postgresql.conf"
+  ansible.builtin.lineinfile:
+    path: "{{ pg_conf_path }}"
+    regexp: "^#?\\s*listen_addresses\\s*="
+    line: "listen_addresses = '*'"
+  notify: Reiniciar PostgreSQL
+
+- name: Autoriza conexões da rede privada ({{ vm_network }}) no pg_hba.conf
+  ansible.builtin.lineinfile:
+    path: "{{ pg_conf_dir }}/pg_hba.conf"
+    line: "host    all             all             {{ vm_network }}         md5"
+    insertafter: EOF
+  notify: Reiniciar PostgreSQL
+
+- name: Aplica mudanças de configuração do PostgreSQL agora, se necessário
+  ansible.builtin.meta: flush_handlers
+
+# ---------------------------------------------------------------------------
+# Usuário e banco de dados da aplicação (idempotente: sempre checa antes de
+# criar; nunca falha se já existir).
+# ---------------------------------------------------------------------------
+- name: "Verifica se o usuário de banco '{{ db_user }}' já existe"
+  ansible.builtin.command: psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='{{ db_user }}'"
+  become_user: postgres
+  register: db_user_check
+  changed_when: false
+
+- name: "Cria o usuário de banco '{{ db_user }}'"
+  ansible.builtin.command: psql -c "CREATE USER \"{{ db_user }}\" WITH PASSWORD '{{ db_password }}';"
+  become_user: postgres
+  when: (db_user_check.stdout | trim) != '1'
+  no_log: true
+
+- name: "Sincroniza a senha do usuário '{{ db_user }}' com config.yml"
+  ansible.builtin.command: psql -c "ALTER USER \"{{ db_user }}\" WITH PASSWORD '{{ db_password }}';"
+  become_user: postgres
+  when: (db_user_check.stdout | trim) == '1'
+  no_log: true
+
+- name: "Verifica se o banco '{{ db_name }}' já existe"
+  ansible.builtin.command: psql -tAc "SELECT 1 FROM pg_database WHERE datname='{{ db_name }}'"
+  become_user: postgres
+  register: db_exists_check
+  changed_when: false
+
+- name: "Cria o banco '{{ db_name }}'"
+  ansible.builtin.command: psql -c "CREATE DATABASE \"{{ db_name }}\" OWNER \"{{ db_user }}\";"
+  become_user: postgres
+  when: (db_exists_check.stdout | trim) != '1'
+
+- name: "Garante privilégios completos de '{{ db_user }}' sobre o banco '{{ db_name }}'"
+  ansible.builtin.command: psql -c "GRANT ALL PRIVILEGES ON DATABASE \"{{ db_name }}\" TO \"{{ db_user }}\";"
+  become_user: postgres
+  changed_when: false
+
+- name: Garante privilégios sobre o schema public (PostgreSQL 15+ revoga do PUBLIC por padrão)
+  ansible.builtin.command: psql -d "{{ db_name }}" -c "GRANT ALL ON SCHEMA public TO \"{{ db_user }}\";"
+  become_user: postgres
+  changed_when: false

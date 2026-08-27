@@ -1,0 +1,41 @@
+---
+# 7) Gera application.properties e o serviço systemd a partir dos templates,
+#    e garante que a aplicação está instalada/habilitada como serviço.
+
+- name: Gera o application.properties a partir do template
+  ansible.builtin.template:
+    src: application.properties.j2
+    dest: "{{ app_home }}/config/application.properties"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0640"
+  no_log: true # contém a senha do banco
+
+- name: Gera o unit systemd barbearia.service a partir do template
+  ansible.builtin.template:
+    src: barbearia.service.j2
+    dest: /etc/systemd/system/barbearia.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Recarregar systemd
+    - Reiniciar barbearia
+
+- name: Garante que o serviço barbearia está habilitado no boot
+  ansible.builtin.service:
+    name: barbearia
+    enabled: true
+
+- name: Remove keystore HTTPS de uma tentativa anterior, se existir (a infra usa HTTP puro)
+  ansible.builtin.file:
+    path: "{{ app_home }}/config/keystore.p12"
+    state: absent
+
+- name: Aplica mudanças de configuração agora, se necessário
+  ansible.builtin.meta: flush_handlers
+
+- name: Garante que o serviço barbearia está rodando
+  ansible.builtin.service:
+    name: barbearia
+    state: started

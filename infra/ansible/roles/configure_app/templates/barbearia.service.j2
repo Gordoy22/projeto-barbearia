@@ -1,8 +1,7 @@
 # =============================================================================
-# barbearia.service — GERADO AUTOMATICAMENTE pelo provisionamento da VM
+# barbearia.service — GERADO AUTOMATICAMENTE pelo Ansible
 # -----------------------------------------------------------------------------
-# Template: infra/templates/barbearia.service.j2
-# Preenchido por: infra/scripts/provision.sh (via envsubst)
+# Template: infra/ansible/roles/configure_app/templates/barbearia.service.j2
 # Instalado em: /etc/systemd/system/barbearia.service
 # =============================================================================
 [Unit]
@@ -12,10 +11,10 @@ Wants=postgresql.service
 
 [Service]
 Type=simple
-User=${APP_USER}
-Group=${APP_USER}
-WorkingDirectory=${APP_HOME}
-ExecStart=/usr/bin/java -jar ${APP_HOME}/${APP_JAR}
+User={{ app_user }}
+Group={{ app_user }}
+WorkingDirectory={{ app_home }}
+ExecStart=/usr/bin/java -jar {{ app_home }}/{{ app_jar }}
 SuccessExitStatus=143
 Restart=on-failure
 RestartSec=5

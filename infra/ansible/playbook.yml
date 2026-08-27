@@ -1,0 +1,29 @@
+# =============================================================================
+# playbook.yml — Provisiona o servidor da aplicação Barbearia
+# -----------------------------------------------------------------------------
+# Equivalente Ansible do antigo scripts/provision.sh. Idempotente: pode ser
+# reexecutado quantas vezes forem necessárias (vagrant up, vagrant provision,
+# vagrant reload --provision, ou ansible-playbook direto dentro da VM) sem
+# duplicar configuração nem falhar.
+#
+# Variáveis (db_name, db_user, db_password, db_port, app_port, app_jar,
+# app_home, app_user, vm_network): valores default em group_vars/all.yml,
+# sobrescritos pelo Vagrantfile via extra_vars a partir de ../config.yml
+# (única fonte de verdade — ver README.md).
+# =============================================================================
+---
+- name: Provisiona o app-server do Projeto Barbearia (Spring Boot + PostgreSQL)
+  hosts: app_servers
+  become: true
+  gather_facts: true
+
+  roles:
+    - base_packages
+    - java
+    - maven
+    - postgresql
+    - app_setup
+    - build_app
+    - configure_app
+    - ssh_external_key
+    - wait_for_app

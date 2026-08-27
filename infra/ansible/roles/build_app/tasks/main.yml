@@ -1,0 +1,50 @@
+---
+# 6) Build do projeto Spring Boot.
+#
+# O código-fonte chega na VM via synced folder (vboxsf, em {{ project_src }}),
+# mas o vboxsf não segue a semântica normal de permissões Unix: operações do
+# Maven (ex: "clean" apagando target/classes) podem falhar com "Operation not
+# permitted" mesmo rodando como root. Por isso copiamos o código para um
+# diretório em filesystem nativo antes de buildar — o synced folder continua
+# sendo só a forma de trazer o código pra dentro da VM.
+
+- name: Cria o diretório de build ({{ build_dir }})
+  ansible.builtin.file:
+    path: "{{ build_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copia o código-fonte para filesystem nativo via rsync (build não roda em vboxsf)
+  ansible.builtin.command: >
+    rsync -a --delete
+    --exclude target/ --exclude .git/ --exclude .idea/ --exclude .vscode/
+    {{ project_src }}/ {{ build_dir }}/
+  changed_when: true
+
+- name: Compila o projeto com Maven (mvn clean package -DskipTests)
+  ansible.builtin.command: mvn -q -DskipTests clean package
+  args:
+    chdir: "{{ build_dir }}"
+  changed_when: true
+
+- name: Localiza o .jar gerado em target/
+  ansible.builtin.find:
+    paths: "{{ build_dir }}/target"
+    patterns: "*.jar"
+    excludes: "*sources*"
+    recurse: false
+  register: built_jar_result
+
+- name: Falha se nenhum .jar foi encontrado (build quebrou)
+  ansible.builtin.fail:
+    msg: "ERRO: nenhum .jar encontrado em {{ build_dir }}/target — build falhou."
+  when: built_jar_result.files | length == 0
+
+- name: "Copia o .jar buildado para {{ app_home }}/{{ app_jar }}"
+  ansible.builtin.copy:
+    src: "{{ built_jar_result.files[0].path }}"
+    dest: "{{ app_home }}/{{ app_jar }}"
+    remote_src: true
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0750"

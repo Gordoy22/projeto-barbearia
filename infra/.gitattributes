@@ -1,5 +1,14 @@
 # Garante final de linha LF nos scripts, mesmo editando no Windows —
-# um shell script com CRLF falha dentro da VM Linux ("$'\r': command not found").
+# um shell script com CRLF falha dentro da VM Linux ("$'\r': command not found"),
+# e o Ansible roda dentro da VM (ansible_local) então seus arquivos YAML/j2
+# também precisam de LF.
 *.sh text eol=lf
 *.j2 text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
 Vagrantfile text eol=lf
+
+# Roda no Windows (host), não dentro da VM — mantém o final de linha nativo.
+*.ps1 text eol=crlf

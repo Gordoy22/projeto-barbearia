@@ -1,0 +1,23 @@
+---
+# 2) Java 21 — repositório oficial Eclipse Temurin (garante JDK 21 real,
+#    independente do que o repo padrão do Ubuntu tiver disponível).
+
+- name: Baixa e instala a chave GPG do repositório Adoptium
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor -o /etc/apt/keyrings/adoptium.gpg
+  args:
+    creates: /etc/apt/keyrings/adoptium.gpg
+    executable: /bin/bash
+
+- name: Registra o repositório apt do Adoptium (Eclipse Temurin)
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb {{ ubuntu_codename }} main"
+    filename: adoptium
+    state: present
+    update_cache: true
+
+- name: Instala o Temurin 21 JDK
+  ansible.builtin.apt:
+    name: temurin-21-jdk
+    state: present

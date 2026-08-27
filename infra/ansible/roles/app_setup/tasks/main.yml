@@ -1,0 +1,23 @@
+---
+# 5) Usuário de sistema e diretórios da aplicação.
+
+- name: "Cria o usuário de sistema '{{ app_user }}'"
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    system: true
+    home: "{{ app_home }}"
+    create_home: true
+    shell: /usr/sbin/nologin
+
+- name: Garante o diretório {{ app_home }}/config
+  ansible.builtin.file:
+    path: "{{ app_home }}/config"
+    state: directory
+    mode: "0755"
+
+- name: "Garante a posse de {{ app_home }} pelo usuário '{{ app_user }}'"
+  ansible.builtin.file:
+    path: "{{ app_home }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    recurse: true

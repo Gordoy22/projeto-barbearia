@@ -1,0 +1,39 @@
+---
+# 8) SSH externo por chave pública (opcional, sem senha) — só roda se o
+#    Vagrantfile encontrou uma chave pública sua no host e a copiou para
+#    /tmp/host_external_key.pub (via provisioner "file", antes do Ansible).
+
+- name: Verifica se uma chave pública SSH externa foi copiada pelo host
+  ansible.builtin.stat:
+    path: /tmp/host_external_key.pub
+  register: host_key_stat
+
+- name: Autoriza a chave pública SSH externa para acesso externo (fora do 'vagrant ssh')
+  when: host_key_stat.stat.exists
+  block:
+    - name: Garante o diretório ~/.ssh do usuário vagrant
+      ansible.builtin.file:
+        path: /home/vagrant/.ssh
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: "0700"
+
+    - name: Lê a chave pública copiada pelo host
+      ansible.builtin.slurp:
+        src: /tmp/host_external_key.pub
+      register: host_key_contents
+
+    - name: Adiciona a chave ao authorized_keys, se ainda não estiver lá
+      ansible.builtin.lineinfile:
+        path: /home/vagrant/.ssh/authorized_keys
+        line: "{{ (host_key_contents.content | b64decode) | trim }}"
+        create: true
+        owner: vagrant
+        group: vagrant
+        mode: "0600"
+
+    - name: Remove o arquivo temporário da chave
+      ansible.builtin.file:
+        path: /tmp/host_external_key.pub
+        state: absent

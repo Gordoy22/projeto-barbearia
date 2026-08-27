@@ -1,0 +1,27 @@
+---
+# 1) Pacotes base + descoberta do codinome do Ubuntu (usado pelos repos
+#    apt do Adoptium e do PGDG nas roles seguintes).
+
+- name: Atualiza o índice de pacotes apt
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Instala pacotes base (curl, gnupg, rsync, etc.)
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+      - gnupg
+      - rsync
+    state: present
+
+- name: Cria o diretório de keyrings apt (/etc/apt/keyrings)
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: "Descobre o codinome do Ubuntu (ex: jammy)"
+  ansible.builtin.set_fact:
+    ubuntu_codename: "{{ ansible_facts.distribution_release }}"

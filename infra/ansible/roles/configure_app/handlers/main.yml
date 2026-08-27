@@ -1,0 +1,9 @@
+---
+- name: Recarregar systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Reiniciar barbearia
+  ansible.builtin.service:
+    name: barbearia
+    state: restarted

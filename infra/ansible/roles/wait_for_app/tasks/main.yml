@@ -1,0 +1,28 @@
+---
+# 9) Espera a aplicação responder antes de encerrar o provisionamento.
+
+- name: "Aguarda a aplicação responder em http://localhost:{{ app_port }}"
+  # status_code aceita uma lista de códigos, não uma faixa ("100-499" não é
+  # válido) — aceitamos 2xx/3xx (a uri module já segue redirects de GET por
+  # padrão, ex: Spring Security mandando "/" para "/login").
+  ansible.builtin.uri:
+    url: "http://localhost:{{ app_port }}"
+    status_code: [200, 201, 202, 203, 204, 205, 206, 300, 301, 302, 303, 304, 307, 308]
+  register: app_health
+  until: app_health.status is defined and app_health.status > 0
+  retries: 60
+  delay: 2
+  ignore_errors: true
+
+- name: Confirma que a aplicação subiu
+  ansible.builtin.debug:
+    msg: "Aplicação respondendo em http://localhost:{{ app_port }}"
+  when: app_health.status is defined and app_health.status > 0
+
+- name: Avisa se a aplicação não respondeu a tempo
+  ansible.builtin.debug:
+    msg: >-
+      Aviso: a aplicação não respondeu em http://localhost:{{ app_port }}
+      dentro do tempo esperado. Verifique com 'vagrant ssh' e
+      'journalctl -u barbearia -f'.
+  when: app_health.status is not defined or app_health.status <= 0
